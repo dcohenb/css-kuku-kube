@@ -1,0 +1,113 @@
+/* Game Setup */
+$levels: 10;
+$maxContrast: 20;
+
+/* Vars */
+$totalCubs: 0;
+
+@for $level from 0 to $levels {
+	$color: rgb(random(254), random(254), random(254));
+	$gridSize: $level + 2;
+	$cubes: $gridSize * $gridSize;
+	$selected: random($cubes) + $totalCubs;
+
+	// Set up the level color and selected cube
+	.level_#{$level} {
+		background: $color;
+
+		&:nth-of-type(#{$selected}) {
+			$diff: ($maxContrast / $levels) * ($levels - $level);
+			background: darken($color, $diff); // Change the color of the cube
+			pointer-events: auto; // Only unable the selected cube
+			z-index: $level + 1; // For animation
+		}
+
+		&:checked {
+			@if ($level <= $levels) {
+				~ .level_#{$level + 1} {
+					opacity: 1;
+				}
+			}
+			@if ($level + 1 == $levels) {
+				~ .finish {
+					opacity: 1;
+				}
+			}
+		}
+	}
+
+	// Set the size of all the cubs in the level
+	$size: 1 / $gridSize;
+	.level_#{$level} {
+		z-index: $level;
+		width: percentage($size);
+		height: percentage($size);
+	}
+
+	// Loop throw all the cubes of each level and position them on the grid
+	$row: 0;
+	$col: 0;
+	@for $cube from 0 to $cubes {
+		.level_#{$level}.cube_#{$cube} {
+			left: percentage($col * $size);
+			top: percentage($row * $size);
+		}
+
+		// Increment the columns and rows in the grid
+		$col: $col + 1;
+		@if $col >= $gridSize {
+			$col: 0;
+			$row: $row + 1;
+		}
+	}
+
+	$totalCubs: $totalCubs + $cubes;
+}
+
+#game {
+	margin: 0 auto;
+	position: relative;
+	width: 700px;
+	height: 700px;
+}
+
+.finish {
+	z-index: 9999999;
+	color: #232323;
+	text-align: center;
+	font-size: 40px;
+	padding-top: 100px;
+}
+
+.finish, .cube {
+	position: absolute;
+	box-sizing: border-box;
+	border: 3px solid white;
+	opacity: 0;
+	pointer-events: none;
+	-webkit-appearance: none; // Prevent the outline
+	outline: none;
+}
+
+.cube:checked {
+	transition: all 0.5s !important;
+	pointer-events: none !important;
+}
+
+.cube:checked, .finish {
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: #efefef;
+}
+
+.cube, .finish {
+	transition: all 0.5s 0.7s;
+}
+
+// Start the game, show the first level
+.cube.level_0 {
+	opacity: 1;
+	pointer-events: auto;
+}

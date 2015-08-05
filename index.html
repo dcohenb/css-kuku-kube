@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Kuku Kube - Pure HTML & CSS</title>
+    <link rel="stylesheet" href="kuku_kube.css"/>
+</head>
+<body>
+
+<div id="game"></div>
+
+<script>
+    var inputs = '';
+    for (var i = 0; i <= 10; i++) {
+        for (var n = 0; n < (i + 2) * (i + 2); n++) {
+            inputs += '<input type="checkbox" class="cube cube_' + n + ' level_' + i + '" />';
+        }
+    }
+    inputs += '<div class="finish">Game Complete!</div>';
+    document.getElementById('game').innerHTML = inputs;
+</script>
+</body>
+</html>
